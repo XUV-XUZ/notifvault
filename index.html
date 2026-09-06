@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NotifVault: Notifications, kept.</title>
+<meta name="description" content="NotifVault keeps every notification your phone would otherwise throw away. Searchable, filterable, and stored entirely on your device.">
+<link rel="canonical" href="https://notifvault.example.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="NotifVault: Notifications, kept.">
+<meta property="og:description" content="Every notification, logged and searchable, long after your phone forgets it.">
+<meta property="og:url" content="https://notifvault.example.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NotifVault: Notifications, kept.">
+<meta name="twitter:description" content="Every notification, logged and searchable, long after your phone forgets it.">
+
+<!--
+  GOOGLE SITE VERIFICATION
+  Paste the meta tag Google gives you directly below this comment, inside <head>.
+  Example:
+  <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #101312;
+    --surface: #171b19;
+    --surface-2: #1d2220;
+    --ink: #f1efe9;
+    --muted: #93a19a;
+    --brass: #d6b370;
+    --brass-dim: #a68a56;
+    --line: #2a2f2c;
+    --max-w: 680px;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  a { color: var(--brass); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  header.site {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  header.site .wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mark {
+    width: 22px; height: 22px;
+    flex: none;
+  }
+
+  .brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+
+  main { padding-top: 64px; }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 52px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    max-width: 12ch;
+  }
+
+  .lede {
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 42ch;
+    margin: 0 0 32px;
+  }
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 72px;
+  }
+
+  .cta {
+    display: inline-block;
+    background: var(--brass);
+    color: #16140d;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 13px 22px;
+    border-radius: 3px;
+    font-size: 15px;
+  }
+
+  .cta[aria-disabled="true"] {
+    background: var(--surface-2);
+    color: var(--muted);
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+
+  .cta-note {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Mock notification log visual */
+  .log {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 80px;
+  }
+
+  .log-entry {
+    display: flex;
+    gap: 14px;
+    padding: 16px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .log-icon.a { background: #2c3a4d; color: #9db8dc; }
+  .log-icon.b { background: #3a2f47; color: #c7a8e0; }
+  .log-icon.c { background: #2f4536; color: #a3cf9f; }
+
+  .log-body { flex: 1; min-width: 0; }
+  .log-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .log-text {
+    color: var(--muted);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .log-time {
+    color: var(--muted);
+    font-size: 13px;
+    flex: none;
+    padding-top: 1px;
+  }
+  .log-gone {
+    font-size: 12px;
+    color: var(--brass-dim);
+    border: 1px solid var(--brass-dim);
+    border-radius: 20px;
+    padding: 2px 9px;
+    flex: none;
+    align-self: flex-start;
+  }
+
+  section { margin-bottom: 72px; }
+
+  .eyebrow {
+    font-size: 14px;
+    color: var(--brass);
+    margin: 0 0 10px;
+  }
+
+  section h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    margin: 0 0 28px;
+    max-width: 20ch;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .feature {
+    background: var(--surface);
+    padding: 22px;
+  }
+
+  .feature h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 8px;
+  }
+
+  .feature p {
+    color: var(--muted);
+    font-size: 14.5px;
+    margin: 0;
+  }
+
+  .privacy-block {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brass);
+    border-radius: 6px;
+    padding: 24px 26px;
+  }
+
+  .privacy-block p {
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .privacy-block p:last-child { margin-bottom: 0; }
+
+  .contact-line { font-size: 17px; }
+  .contact-line a { font-weight: 600; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 26px 0 48px;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 520px) {
+    .features { grid-template-columns: 1fr; }
+    .cta-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <svg class="mark" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="10" width="18" height="11" rx="2" stroke="#d6b370" stroke-width="1.6"/>
+      <path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="#d6b370" stroke-width="1.6"/>
+      <circle cx="12" cy="15" r="1.6" fill="#d6b370"/>
+    </svg>
+    <span class="brand">NotifVault</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Notifications, kept.</h1>
+  <p class="lede">Swipe one away by accident and it's gone forever unless NotifVault already caught it. Every notification, logged and searchable, long after your phone forgets it.</p>
+
+  <div class="cta-row">
+    <a class="cta" href="#" aria-disabled="true">Coming to Google Play</a>
+    <span class="cta-note">Currently in review</span>
+  </div>
+
+  <div class="log" aria-hidden="true">
+    <div class="log-entry">
+      <div class="log-icon a">M</div>
+      <div class="log-body">
+        <div class="log-title">Messages</div>
+        <div class="log-text">Hey, are we still on for tomorrow?</div>
+      </div>
+      <div class="log-time">9:41</div>
+    </div>
+    <div class="log-entry">
+      <div class="log-icon b">B</div>
+      <div class="log-body">
+        <div class="log-title">Banking app</div>
+        <div class="log-text">$42.00 payment confirmed, checking ••4821</div>
+      </div>
+      <div class="log-gone">Dismissed 2h ago</div>
+    </div>
+    <div class="log-entry">
+      <div class="log-icon c">C</div>
+      <div class="log-body">
+        <div class="log-title">Calendar</div>
+        <div class="log-text">Reminder: Dentist appointment at 4:00 PM</div>
+      </div>
+      <div class="log-time">Yesterday, 2:15 PM</div>
+    </div>
+  </div>
+
+  <section>
+    <p class="eyebrow">Why it exists</p>
+    <h2>Android throws away notifications the moment you clear them.</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>Full history</h3>
+        <p>Every notification stays logged, even ones you've already dismissed or swiped away.</p>
+      </div>
+      <div class="feature">
+        <h3>Search & filter</h3>
+        <p>Find a message from three days ago by app, keyword, or time, not by scrolling back through memory.</p>
+      </div>
+      <div class="feature">
+        <h3>No clutter</h3>
+        <p>One clean log instead of digging through five different apps to find what buzzed you.</p>
+      </div>
+      <div class="feature">
+        <h3>Runs quietly</h3>
+        <p>Sits in the background, logs as things arrive, doesn't get in your way.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Privacy</p>
+    <h2>Your notifications are yours.</h2>
+    <div class="privacy-block">
+      <p>Everything NotifVault logs stays on your device. Nothing is uploaded, sold, or shared.</p>
+      <p>Read the full <a href="#">privacy policy</a> for details on what's accessed and why.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Support</p>
+    <p class="contact-line">Questions or feedback: <a href="mailto:Notif_Vault@outlook.com">Notif_Vault@outlook.com</a></p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    NotifVault is built by XUV. &copy; 2026 XUV. All rights reserved.
+  </div>
+</footer>
+
+</body>
+</html>
